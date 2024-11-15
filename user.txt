@@ -1,0 +1,8 @@
+Staff:
+George password123
+Rachel password456
+---
+Member:
+Joe lookhere
+Jeremy lookthere
+---
