@@ -8,7 +8,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func try() {
+func Try() {
 	// Calls to Graph
 
 	// g := dataStructure.NewGraph()

@@ -12,7 +12,7 @@ import (
 
 var (
 	mu sync.RWMutex
-	wg sync.WaitGroup
+	// wg sync.WaitGroup
 )
 
 func main() {
