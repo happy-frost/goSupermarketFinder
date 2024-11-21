@@ -3,6 +3,7 @@ package dataStructure
 import (
 	"errors"
 	"fmt"
+	"time"
 )
 
 type User struct {
@@ -16,9 +17,13 @@ func (u User) name() string {
 	return u.username
 }
 
+func (u User) EmptyUser() bool {
+	return u.username == ""
+}
+
 func GuestUser() User {
 	return User{
-		username: "",
+		username: "Guest",
 		password: "",
 		staff:    false,
 		loggedIn: true,
@@ -42,10 +47,10 @@ func (u *User) AddUser(ubst *BST[User], user string, pass string, isStaff bool) 
 	return nil
 }
 
-func (u *User) LogIn() error {
-	var password string
-	fmt.Print("Password: ")
-	fmt.Scanln(&password)
+func (u *User) LogIn(password string) error {
+	// var password string
+	// fmt.Print("Password: ")
+	// fmt.Scanln(&password)
 	if password == u.password {
 		u.loggedIn = true
 		fmt.Println("Successfully logged in")
@@ -53,6 +58,14 @@ func (u *User) LogIn() error {
 	} else {
 		return errors.New("incorrect password")
 	}
+}
+
+func (u *User) LoggedIn() bool {
+	return u.loggedIn
+}
+
+func (u *User) Username() string {
+	return u.username
 }
 
 func (u *User) LogOut() error {
@@ -64,56 +77,54 @@ func (u *User) LogOut() error {
 		return errors.New("user not logged in, cannot log out")
 	}
 }
-func (u *User) staffCheck() error {
-	if !u.loggedIn {
-		return errors.New("please log in to edit the items in the store")
-	}
-	if !u.staff {
-		return errors.New("only staff can edit items")
-	}
-	return nil
+func (u *User) StaffCheck() bool {
+	return u.staff
 }
 func (u *User) AddItem(bst *BST[Item], name string, x float64, y float64, s int) error {
-	err := u.staffCheck()
-	if err != nil {
-		return err
+	if !u.staff {
+		return errors.New("only staff can add items")
 	}
-	err = bst.Insert(Item{
+	_, err := bst.Search(name)
+	if err == nil {
+		return errors.New("item exists, please edit item")
+	}
+	item := Item{
 		Name:  name,
 		X:     x,
 		Y:     y,
 		Stock: s,
-	})
+	}
+	err = bst.Insert(item)
+	time.Sleep(15 * time.Second)
 	return err
 }
 
 func (u *User) RemoveItem(bst *BST[Item], name string) error {
-	err := u.staffCheck()
-	if err != nil {
-		return err
+	if !u.staff {
+		return errors.New("only staff can remove items")
 	}
-	err = bst.Remove(name)
+	err := bst.Remove(name)
+	time.Sleep(5 * time.Second)
 	return err
 }
 
 func (u *User) UpdateItemStock(bst *BST[Item], name string, stock int) error {
-	err := u.staffCheck()
-	if err != nil {
-		return err
+	if !u.staff {
+		return errors.New("only staff can update items stock")
 	}
 	// Not sure if bst function should be exported, but feels safer as such!
 	binaryNode, err := bst.searchFunction(bst.root, name)
-	if err != nil {
-		fmt.Println("error:", err)
-	}
+	// if err != nil {
+	// 	fmt.Println("error:", err)
+	// }
 	binaryNode.data.Stock = stock
+	time.Sleep(5 * time.Second)
 	return err
 }
 
 func (u *User) UpdateItemLocation(bst *BST[Item], name string, x float64, y float64) error {
-	err := u.staffCheck()
-	if err != nil {
-		return err
+	if !u.staff {
+		return errors.New("only staff can update item location")
 	}
 	// Not sure if bst function should be exported, but feels safer as such!
 	// Members (not staff) can only access the Search function?
@@ -123,6 +134,7 @@ func (u *User) UpdateItemLocation(bst *BST[Item], name string, x float64, y floa
 	}
 	binaryNode.data.X = x
 	binaryNode.data.Y = y
+	time.Sleep(5 * time.Second)
 	return err
 }
 
@@ -141,5 +153,6 @@ func (u *User) FindItemLocation(bst *BST[Item], name string) (x float64, y float
 		}
 		// fmt.Printf("%v %v %v %v\n", item.Name, item.X, item.Y, item.Stock)
 	}
+	// time.Sleep(10 * time.Second)
 	return 0.0, 0.0, err
 }

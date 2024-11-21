@@ -5,19 +5,23 @@ import (
 	"fmt"
 )
 
-type Node struct {
-	item string
-	next *Node
-}
+// type stringNode struct {
+// 	item string
+// 	next *stringNode
+// }
 
-type queue struct {
-	front *Node
-	back  *Node
+type Queue[T comparable] struct {
+	front *node[T]
+	back  *node[T]
 	size  int
 }
 
-func (p *queue) Enqueue(name string) error {
-	newNode := &Node{
+func NewQueue[T comparable]() Queue[T] {
+	return Queue[T]{nil, nil, 0}
+}
+
+func (p *Queue[T]) Enqueue(name T) error {
+	newNode := &node[T]{
 		item: name,
 		next: nil,
 	}
@@ -33,11 +37,11 @@ func (p *queue) Enqueue(name string) error {
 	return nil
 }
 
-func (p *queue) Dequeue() (string, error) {
-	var item string
+func (p *Queue[T]) Dequeue() (T, error) {
+	var item T
 
 	if p.front == nil {
-		return "", errors.New("empty queue!")
+		return item, errors.New("empty queue")
 	}
 
 	item = p.front.item
@@ -51,7 +55,7 @@ func (p *queue) Dequeue() (string, error) {
 	return item, nil
 }
 
-func (p *queue) PrintAllNodes() error {
+func (p *Queue[T]) PrintAllNodes() error {
 	currentNode := p.front
 	if currentNode == nil {
 		fmt.Println("Queue is empty.")
@@ -66,6 +70,6 @@ func (p *queue) PrintAllNodes() error {
 	return nil
 }
 
-func (p *queue) isEmpty() bool {
+func (p *Queue[T]) IsEmpty() bool {
 	return p.size == 0
 }

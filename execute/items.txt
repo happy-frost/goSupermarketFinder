@@ -9,3 +9,4 @@ noodles, 1, 0.2, 6
 peas, 2, 2, 1
 oats, 4, 2, 1
 orange juice, 3, 1.2, 1
+pens, 3.9, 2, 1

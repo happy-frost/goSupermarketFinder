@@ -1,4 +1,4 @@
-package graph
+package dataStructure
 
 import (
 	"bufio"
@@ -20,6 +20,7 @@ func ParseGraph() (*Graph, error) {
 	g := NewGraph()
 
 	fileLoc := os.Getenv("GRAPH_LOCATION")
+	// fmt.Println(fileLoc)
 	file, err := os.Open(fileLoc)
 	if err != nil {
 		return g, errors.New("error opening file:" + err.Error())
@@ -45,6 +46,7 @@ func ParseGraph() (*Graph, error) {
 				// splits the string into the node number and the coordinates
 				nodeStr := strings.Split(scanner.Text(), ":")
 
+				// index in txt is actually ignored
 				// splits the coordinates into the x and y coordinates
 				coor := strings.Split(
 					strings.Trim(nodeStr[1], " "),

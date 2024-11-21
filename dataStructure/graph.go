@@ -1,4 +1,4 @@
-package graph
+package dataStructure
 
 import (
 	"errors"
@@ -7,30 +7,30 @@ import (
 )
 
 type Graph struct {
-	nodes   []node
-	adjList map[node][]edge
+	Nodes   []graphNode
+	adjList map[graphNode][]edge
 	// technically can just use two slice, but this is easier to find and implement
 }
 
-type node struct {
+type graphNode struct {
 	id int
 	x  float64
 	y  float64
 }
 
 type edge struct {
-	v1       node
-	v2       node
+	v1       graphNode
+	v2       graphNode
 	distance float64
 }
 
 func NewGraph() *Graph {
 	return &Graph{
-		adjList: make(map[node][]edge),
+		adjList: make(map[graphNode][]edge),
 	}
 }
 
-func (g *Graph) addEdge(v1 node, v2 node) error {
+func (g *Graph) addEdge(v1 graphNode, v2 graphNode) error {
 	// TODO don't add edge it edge already exists!
 
 	// check if the node already exists
@@ -71,16 +71,16 @@ func (g *Graph) addEdge(v1 node, v2 node) error {
 
 func (g *Graph) AddEdge(id1 int, id2 int) error {
 	// Take the ID of the two nodes that the edge links
-	v1 := g.nodes[id1]
-	v2 := g.nodes[id2]
+	v1 := g.Nodes[id1]
+	v2 := g.Nodes[id2]
 	err := g.addEdge(v1, v2)
 	return err
 }
 
-func (g *Graph) addNode(v node) error {
+func (g *Graph) addNode(v graphNode) error {
 	// create node if it does not already exists
 	if _, exists := g.adjList[v]; !exists {
-		g.nodes = append(g.nodes, v)
+		g.Nodes = append(g.Nodes, v)
 		g.adjList[v] = make([]edge, 0, 3) // Initialize to 3 as it most node will have 3 edges
 		return nil
 	} else {
@@ -101,16 +101,16 @@ func (g *Graph) AddNode(x float64, y float64) (int, error) {
 	// 	}
 	// }
 
-	index := len(g.nodes)
-	v := node{index, x, y}
+	index := len(g.Nodes)
+	v := graphNode{index, x, y}
 	err := g.addNode(v)
 	return index, err // returns index and any error
 }
 
 func (g *Graph) GetNodeFromId(id int) (x float64, y float64, err error) {
 	// From node id returns the x and y position of a node, given its index
-	if id < len(g.nodes) {
-		v := g.nodes[id]
+	if id < len(g.Nodes) {
+		v := g.Nodes[id]
 		x = v.x
 		y = v.y
 		err = nil
@@ -127,7 +127,7 @@ func (g *Graph) GetNodeFromId(id int) (x float64, y float64, err error) {
 // }
 
 // The GetNeighbours function returns the neighbouring nodea and the weight to get to that node
-func (g *Graph) getNeighbours(v1 node) ([]int, []float64) {
+func (g *Graph) getNeighbours(v1 graphNode) ([]int, []float64) {
 	edgeList := g.adjList[v1]
 	neighbours := make([]int, len(edgeList))
 	distance := make([]float64, len(edgeList))
@@ -142,12 +142,12 @@ func (g *Graph) getNeighbours(v1 node) ([]int, []float64) {
 }
 
 func (g *Graph) GetNeighbours(id int) ([]int, []float64) {
-	v1 := g.nodes[id]
+	v1 := g.Nodes[id]
 	return g.getNeighbours(v1)
 }
 
 func (g *Graph) PrintGraph() {
-	for _, vertex := range g.nodes {
+	for _, vertex := range g.Nodes {
 		neighbours, distance := g.getNeighbours(vertex)
 		fmt.Printf("%d:\nNeighbours: %v\nDistance  : %v\n", vertex.id, neighbours, distance)
 

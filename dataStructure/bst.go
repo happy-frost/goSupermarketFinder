@@ -101,7 +101,9 @@ func (bst *BST[K]) PreOrder() {
 
 func (bst *BST[K]) searchFunction(t *BinaryNode[K], target string) (*BinaryNode[K], error) {
 	// Search for item, if cannot find, return root with an error
-	if t.data.name() == target {
+	if t == nil {
+		return bst.root, errors.New("did not find item")
+	} else if t.data.name() == target {
 		return t, nil
 	} else if t.left == nil && t.right == nil {
 		return bst.root, errors.New("did not find item")
